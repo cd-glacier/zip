@@ -8,61 +8,20 @@
 
 using namespace std;
 
-class Node{
-  private:
-    Node *left;
-    Node *right;
-    Node *parent;
-    int weight;
-    vector<char> symbols;
-  public:
-    int getWeight(){
-      return weight;
-    }
-    vector<char> getSymbols(){
-      return symbols;
-    }
-    void setWeight(int w){
-      weight = w;
-    }
-  Node(vector<char> s, int w){
-    symbols = s;
-    weight = w;
-  }
-  Node(Node *l, Node *r, vector<char> s, int w){
-    left = l;
-    right = r;
-    symbols = s;
-    weight = w;
-  }
-};
-
-class CodeTree{
-  private:
-    Node *node;
-    vector<char> symbols;
-    int weight;
-  public:
-    vector<char> getSymbols(){
-      return symbols;
-    };
-    int getWeight(){
-      return weight; 
-    };
-  CodeTree(Node *n, vector<char> s, int w) {
-    node = n;
-    symbols = s;
-    weight = w;
-  }
+struct Node {
+  vector<char> symbols;
+  int weight;
 };
 
 bool isExistSymbol(vector<char> symbols, char symbol) {
   return find(symbols.begin(), symbols.end(), symbol) != symbols.end();
 }
 
+// 検索してNodeを返したい
+// 型のある言語で検索してなかった時ってどうするべきだっけ
 Node getNode(vector<Node> v, char c){
   for (auto itr : v){
-    auto symbols = itr.getSymbols();
+    auto symbols = itr.symbols;
     // if c exist
     if (isExistSymbol(symbols, c)) {
       return itr;
@@ -70,18 +29,18 @@ Node getNode(vector<Node> v, char c){
   }
 }
 
-vector<Node> makeWeightMap(fstream &fin){
+vector<Node> makeWeightFromFile(fstream &fin){
   char c;
   vector<Node> result;
   while(fin.get(c)){
     auto node = getNode(result, c);
-    if (isExistSymbol(node.getSymbols(), c)) {
+    if (isExistSymbol(node.symbols, c)) {
       vector<char> v;
       v.push_back(c);
-      auto newNode = new Node(v, 1);
-      result.push_back(*newNode);
+      Node newNode = {v, 1};
+      result.push_back(newNode);
     } else {
-      node.setWeight(node.getWeight() + 1);
+      node.weight = node.weight+ 1;
     }
   }
   return result;
@@ -92,16 +51,18 @@ vector<Node> sort(vector<Node> &nodes){
   vector<Node> result;
   while (tmp.size() != 0) {
     int max = 0;
-    int maxIndex = -1;
+    int maxIndex;
     vector<char> max_key;
-    for (auto n : tmp) {
-      maxIndex++;
-      if (max <= n.getWeight()) {
-        max = n.getWeight();
+    vector<Node>::iterator iter;
+    for (iter = tmp.begin(); iter != tmp.end(); ++iter) {
+      auto n = *iter;
+      if (max <= n.weight){
+        max = n.weight;
+        maxIndex = distance(tmp.begin(), iter);
       }
     }
     result.push_back(tmp[maxIndex]);
-    tmp.erase(tmp.begin() + 0);
+    tmp.erase(iter);
   }
   return result;
 }
@@ -118,12 +79,12 @@ int main(int argc, char *argv[]){
   }
 
   // calc weight 
-  auto nodes = makeWeightMap(fin);
+  auto nodes = makeWeightFromFile(fin);
   auto leaves = sort(nodes);
   reverse(leaves.begin(), leaves.end());
   // make huffman code tree
   for (auto i = 0; i < leaves.size() - 1 ; i++){
-    cout << leaves[i].getSymbols()[0] << endl;
+    cout << leaves[i].symbols[0] << endl;
   }
   
   fin.close();

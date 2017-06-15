@@ -11,7 +11,9 @@ using namespace std;
 struct Node {
   vector<char> symbols;
   int weight;
-  bool isNull;
+  Node *left;
+  Node *right;
+  Node *parent;
   
   bool operator<( const Node& right ) const {
    return weight < right.weight;
@@ -68,6 +70,24 @@ int main(int argc, char *argv[]){
   sortNode(leaves);
   reverse(leaves.begin(), leaves.end());
   // make huffman code tree
+  //要素が二つになるまで繰り返す
+  while(leaves.size() != 2){
+    //親ノードを作る
+    Node parent; 
+    parent.left = &leaves[0];
+    parent.right = &leaves[1];
+    parent.weight = leaves[0].weight + leaves[1].weight;
+    copy(leaves[0].symbols.begin(), leaves[0].symbols.end(), back_inserter(parent.symbols));
+    copy(leaves[1].symbols.begin(), leaves[1].symbols.end(), back_inserter(parent.symbols));
+    //leavesの子ノード二つを削除して
+    leaves.erase(leaves.begin());
+    leaves.erase(leaves.begin());
+    //親ノードをpush_back
+    leaves.push_back(parent);
+    //sort
+    sortNode(leaves);
+  }
+  
   for (auto i = 0; i < leaves.size() - 1 ; i++){
     cout << leaves[i].symbols[0] << " : " << leaves[i].weight << endl;
   }

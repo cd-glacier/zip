@@ -11,6 +11,10 @@ using namespace std;
 struct Node {
   vector<char> symbols;
   int weight;
+  
+  bool operator<( const Node& right ) const {
+   return weight < right.weight;
+  }
 };
 
 bool isExistSymbol(vector<char> symbols, char symbol) {
@@ -47,24 +51,7 @@ vector<Node> makeWeightFromFile(fstream &fin){
 }
 
 vector<Node> sort(vector<Node> &nodes){
-  vector<Node> tmp = nodes;
-  vector<Node> result;
-  while (tmp.size() != 0) {
-    int max = 0;
-    int maxIndex;
-    vector<char> max_key;
-    vector<Node>::iterator iter;
-    for (iter = tmp.begin(); iter != tmp.end(); ++iter) {
-      auto n = *iter;
-      if (max <= n.weight){
-        max = n.weight;
-        maxIndex = distance(tmp.begin(), iter);
-      }
-    }
-    result.push_back(tmp[maxIndex]);
-    tmp.erase(iter);
-  }
-  return result;
+  return sort(nodes.begin(), nodes.end());
 }
 
 int main(int argc, char *argv[]){

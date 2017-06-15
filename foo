@@ -1,0 +1,4 @@
+zip.cpp: In function ‘std::vector<Node> sort(std::vector<Node>&)’:
+zip.cpp:54:41: error: could not convert ‘std::sort<__gnu_cxx::__normal_iterator<Node*, std::vector<Node> > >((& nodes)->std::vector<_Tp, _Alloc>::begin<Node, std::allocator<Node> >(), (& nodes)->std::vector<_Tp, _Alloc>::end<Node, std::allocator<Node> >())’ from ‘void’ to ‘std::vector<Node>’
+   return sort(nodes.begin(), nodes.end());
+                                         ^

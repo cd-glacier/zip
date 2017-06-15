@@ -22,30 +22,14 @@ bool isExistSymbol(vector<char> symbols, char symbol) {
   return find(symbols.begin(), symbols.end(), symbol) != symbols.end();
 }
 
-Node *getNode(vector<Node> vecs, char c){
-  for (int i = 0; i < vecs.size(); i++){
-    auto symbols = vecs[i].symbols;
-    // if c exist
-    if (isExistSymbol(symbols, c)) {
-      return &vecs[i];
-    }
-  }
-  return nullptr;
-}
-
-vector<Node> makeWeightFromFile(fstream &fin){
+map<char, int> makeWeightFromFile(fstream &fin){
   char c;
-  vector<Node> result;
+  map<char, int> result;
   while(fin.get(c)){
-    auto node = getNode(result, c);
-    if (node == nullptr) {
-      vector<char> v;
-      v.push_back(c);
-      Node newNode = {v, 1};
-      result.push_back(newNode);
+    if (result.find(c) != result.end()) {
+      result[c] = 1;
     } else {
-      Node *node = getNode(result, c);
-      node->weight = node->weight + 1;
+      result[c] += 1;
     }
   }
   return result;
@@ -59,7 +43,7 @@ int main(int argc, char *argv[]){
   // get file name from command line arg
   //string fileName = argv[1];
   
-  string fileName = "./out";
+  string fileName = "./dump.sql";
  
   // open file 
   fstream fin(fileName);
@@ -69,16 +53,24 @@ int main(int argc, char *argv[]){
   }
 
   // calc weight 
-  auto leaves = makeWeightFromFile(fin);
+  auto nodes = makeWeightFromFile(fin);
+  // map to vector
+  vector<Node> leaves;
+  for (auto iter = nodes.begin(); iter != nodes.end(); ++iter){
+    vector<char> symbols;
+    symbols.push_back(iter->first);
+    Node node;
+    node.symbols = symbols;
+    node.weight = iter->second;
+    leaves.push_back(node);
+  }
  
-  /* 
   sortNode(leaves);
   reverse(leaves.begin(), leaves.end());
   // make huffman code tree
   for (auto i = 0; i < leaves.size() - 1 ; i++){
     cout << leaves[i].symbols[0] << endl;
   }
-  */
   
   fin.close();
   return 0;

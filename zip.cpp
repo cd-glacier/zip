@@ -26,7 +26,7 @@ map<char, int> makeWeightFromFile(fstream &fin){
   char c;
   map<char, int> result;
   while(fin.get(c)){
-    if (result.find(c) != result.end()) {
+    if (result.find(c) == result.end()) {
       result[c] = 1;
     } else {
       result[c] += 1;
@@ -69,7 +69,7 @@ int main(int argc, char *argv[]){
   reverse(leaves.begin(), leaves.end());
   // make huffman code tree
   for (auto i = 0; i < leaves.size() - 1 ; i++){
-    cout << leaves[i].symbols[0] << endl;
+    cout << leaves[i].symbols[0] << " : " << leaves[i].weight << endl;
   }
   
   fin.close();

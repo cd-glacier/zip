@@ -50,8 +50,8 @@ vector<Node> makeWeightFromFile(fstream &fin){
   return result;
 }
 
-vector<Node> sort(vector<Node> &nodes){
-  return sort(nodes.begin(), nodes.end());
+void sortNode(vector<Node> &nodes){
+  sort(nodes.begin(), nodes.end());
 }
 
 int main(int argc, char *argv[]){
@@ -66,8 +66,8 @@ int main(int argc, char *argv[]){
   }
 
   // calc weight 
-  auto nodes = makeWeightFromFile(fin);
-  auto leaves = sort(nodes);
+  auto leaves = makeWeightFromFile(fin);
+  sortNode(leaves);
   reverse(leaves.begin(), leaves.end());
   // make huffman code tree
   for (auto i = 0; i < leaves.size() - 1 ; i++){

@@ -66,17 +66,28 @@ int main(int argc, char *argv[]){
     node.weight = iter->second;
     leaves.push_back(node);
   }
- 
   sortNode(leaves);
-  reverse(leaves.begin(), leaves.end());
+
   // make huffman code tree
-  //要素が二つになるまで繰り返す
-  while(leaves.size() != 2){
+  //要素が1つになるまで繰り返す
+  while(leaves.size() != 1) {
+    Node* tmp0 = new Node();
+    Node* tmp1 = new Node();
+    tmp0->weight = leaves[0].weight;
+    tmp0->symbols = leaves[0].symbols;
+    tmp0->left = leaves[0].left;
+    tmp0->right = leaves[0].right;
+    tmp1->weight = leaves[1].weight;
+    tmp1->symbols = leaves[1].symbols;
+    tmp1->left = leaves[1].left;
+    tmp1->right = leaves[1].right;
+    
     //親ノードを作る
     Node parent; 
-    parent.left = &leaves[0];
-    parent.right = &leaves[1];
+    parent.left = tmp0;
+    parent.right = tmp1;
     parent.weight = leaves[0].weight + leaves[1].weight;
+    // 要素を足す
     copy(leaves[0].symbols.begin(), leaves[0].symbols.end(), back_inserter(parent.symbols));
     copy(leaves[1].symbols.begin(), leaves[1].symbols.end(), back_inserter(parent.symbols));
     //leavesの子ノード二つを削除して
@@ -86,11 +97,13 @@ int main(int argc, char *argv[]){
     leaves.push_back(parent);
     //sort
     sortNode(leaves);
+    delete tmp0;
+    delete tmp1;
   }
   
-  for (auto i = 0; i < leaves.size() - 1 ; i++){
-    cout << leaves[i].symbols[0] << " : " << leaves[i].weight << endl;
-  }
+  //参照を渡しているのに消してるからだめ
+  
+  cout << leaves[0].weight << endl;
   
   fin.close();
   return 0;

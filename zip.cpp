@@ -20,7 +20,7 @@ struct Node {
   }
 };
 
-bool isExistSymbol(vector<char> symbols, char symbol) {
+bool isExistSymbol(char symbol, vector<char> symbols) {
   return find(symbols.begin(), symbols.end(), symbol) != symbols.end();
 }
 
@@ -28,6 +28,7 @@ map<char, int> makeWeightFromFile(fstream &fin){
   char c;
   map<char, int> result;
   while(fin.get(c)){
+    // みつからなかったら
     if (result.find(c) == result.end()) {
       result[c] = 1;
     } else {
@@ -41,11 +42,29 @@ void sortNode(vector<Node> &nodes){
   sort(nodes.begin(), nodes.end());
 }
 
+vector<char> encode(char symbol, Node *tree, vector<char> result) {
+   
+  if(tree->left->symbols.size() == 1 && tree->left->symbols[0] == symbol){
+    result.push_back('0');
+    return result; 
+  } else if (tree->right->symbols.size() == 1 && tree->right->symbols[0] == symbol) {
+    result.push_back('1');
+    return result; 
+  } else if (isExistSymbol(symbol, tree->left->symbols)) {
+    result.push_back('0');
+    return encode(symbol, tree->left, result);
+  } else if (isExistSymbol(symbol, tree->right->symbols)) {
+    result.push_back('1');
+    return encode(symbol, tree->right, result);
+  }
+  
+}
+
 int main(int argc, char *argv[]){
   // get file name from command line arg
   //string fileName = argv[1];
-  
   string fileName = "./dump.sql";
+  string outFileName = "./out.zip";
  
   // open file 
   fstream fin(fileName);
@@ -66,6 +85,7 @@ int main(int argc, char *argv[]){
     node.weight = iter->second;
     leaves.push_back(node);
   }
+  fin.close();
   sortNode(leaves);
 
   // make huffman code tree
@@ -101,11 +121,10 @@ int main(int argc, char *argv[]){
     delete tmp1;
   }
   
-  //参照を渡しているのに消してるからだめ
-  
-  cout << leaves[0].weight << endl;
-  
-  fin.close();
+  //ofstream fout(outFileName); 
+  vector<char> result; 
+  cout << encode('a', &leaves[0], result)[1] << endl;
+  //fout.close();
   return 0;
 }
 

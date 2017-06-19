@@ -20,8 +20,8 @@ struct Node {
   }
 };
 
-bool isExistSymbol(char symbol, vector<char> symbols) {
-  return find(symbols.begin(), symbols.end(), symbol) != symbols.end();
+bool isExistSymbol(char symbol, vector<char> *symbols) {
+  return find(symbols->begin(), symbols->end(), symbol) != symbols->end();
 }
 
 map<char, int> makeWeightFromFile(fstream &fin){
@@ -42,22 +42,20 @@ void sortNode(vector<Node> &nodes){
   sort(nodes.begin(), nodes.end());
 }
 
-vector<char> encode(char symbol, Node *tree, vector<char> result) {
-   
+vector<char> *encode(char symbol, Node *tree, vector<char> *result) {
   if(tree->left->symbols.size() == 1 && tree->left->symbols[0] == symbol){
-    result.push_back('0');
+    result->push_back('0');
     return result; 
   } else if (tree->right->symbols.size() == 1 && tree->right->symbols[0] == symbol) {
-    result.push_back('1');
+    result->push_back('1');
     return result; 
-  } else if (isExistSymbol(symbol, tree->left->symbols)) {
-    result.push_back('0');
-    return encode(symbol, tree->left, result);
-  } else if (isExistSymbol(symbol, tree->right->symbols)) {
-    result.push_back('1');
-    return encode(symbol, tree->right, result);
+  } else if (isExistSymbol(symbol, &(tree->left->symbols))) {
+    result->push_back('0');
+    encode(symbol, tree->left, result);
+  } else if (isExistSymbol(symbol, &(tree->right->symbols))) {
+    result->push_back('1');
+    encode(symbol, tree->right, result);
   }
-  
 }
 
 int main(int argc, char *argv[]){
@@ -117,14 +115,16 @@ int main(int argc, char *argv[]){
     leaves.push_back(parent);
     //sort
     sortNode(leaves);
-    delete tmp0;
-    delete tmp1;
   }
   
   //ofstream fout(outFileName); 
   vector<char> result; 
-  cout << encode('a', &leaves[0], result)[1] << endl;
+  encode('a', &leaves[0], &result);
+  for (auto iter = result.begin(); iter != result.end(); ++iter){
+    cout << *iter;
+  }
   //fout.close();
+  
   return 0;
 }
 

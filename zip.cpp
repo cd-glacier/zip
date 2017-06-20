@@ -62,7 +62,7 @@ int main(int argc, char *argv[]){
   // get file name from command line arg
   //string fileName = argv[1];
   string fileName = "./dump.sql";
-  string outFileName = "./out.zip";
+  string outFileName = "./out.zap";
  
   // open file 
   fstream fin(fileName);
@@ -83,7 +83,6 @@ int main(int argc, char *argv[]){
     node.weight = iter->second;
     leaves.push_back(node);
   }
-  fin.close();
   sortNode(leaves);
 
   // make huffman code tree
@@ -116,15 +115,32 @@ int main(int argc, char *argv[]){
     //sort
     sortNode(leaves);
   }
-  
-  //ofstream fout(outFileName); 
-  vector<char> result; 
-  encode('a', &leaves[0], &result);
-  for (auto iter = result.begin(); iter != result.end(); ++iter){
-    cout << *iter;
+
+  // make out file
+  char c;
+  vector<char> encodedText;
+  fstream refin(fileName);
+  while(refin.get(c)){
+    vector<char> result;
+    encode(c, &leaves[0], &result);
+    for (auto iter = result.begin(); iter != result.end(); ++iter){
+      encodedText.push_back(*iter);
+    }
   }
-  //fout.close();
+  refin.close();
   
+  ofstream fout;
+  fout.open(outFileName, ios::binary);
+  // encodedTextから８個取り出してstringにする
+  for (int i = 0; i < (encodedText.size() / 8); i+=8){
+    string byteCode;
+    for (int j = i; j < (8 + i); j++){
+      byteCode = byteCode + encodedText[j];
+    }
+    fout.write(byteCode.c_str(), 8);
+  }
+  fout.close();
+ 
   return 0;
 }
 

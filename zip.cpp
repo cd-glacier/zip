@@ -60,9 +60,8 @@ vector<char> *encode(char symbol, Node *tree, vector<char> *result) {
 
 int main(int argc, char *argv[]){
   // get file name from command line arg
-  //string fileName = argv[1];
-  string fileName = "./dump.sql";
-  string outFileName = "./out.zap";
+  string fileName = argv[1];
+  string outFileName = fileName + ".zlp";
  
   // open file 
   fstream fin(fileName);
@@ -128,13 +127,13 @@ int main(int argc, char *argv[]){
     }
   }
   refin.close();
-
+ 
   ofstream fout;
   fout.open(outFileName, ios::binary);
-  // encodedTextから2個取り出してstringにする
-  for (int i = 0; i < (encodedText.size() / 2); i+=2){
+  // encodedTextから８個取り出してstringにする
+  for (int i = 0; i < (encodedText.size() / 8); i+=8){
     string byteCode;
-    for (int j = i; j < (2 + i); j++){
+    for (int j = i; j < (8 + i); j++){
       byteCode = byteCode + encodedText[j];
     }
     string str = byteCode.c_str();
@@ -143,7 +142,7 @@ int main(int argc, char *argv[]){
     fout.write((char *)&c, sizeof(c));
   }
   fout.close();
-  
+ 
   return 0;
 }
 

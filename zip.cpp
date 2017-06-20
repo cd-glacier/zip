@@ -128,7 +128,7 @@ int main(int argc, char *argv[]){
     }
   }
   refin.close();
-  
+ 
   ofstream fout;
   fout.open(outFileName, ios::binary);
   // encodedTextから８個取り出してstringにする
@@ -137,7 +137,10 @@ int main(int argc, char *argv[]){
     for (int j = i; j < (8 + i); j++){
       byteCode = byteCode + encodedText[j];
     }
-    fout.write(byteCode.c_str(), 8);
+    string str = byteCode.c_str();
+    int num = stoi(str);
+    char c = char(num); 
+    fout.write((char *)&c, sizeof(c));
   }
   fout.close();
  
